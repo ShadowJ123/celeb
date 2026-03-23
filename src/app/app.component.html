@@ -1,0 +1,110 @@
+<div class="app-container" [style.backgroundColor]="currentBgColor" [class.dark-mode]="currentBgColor === 'var(--bg-black)' || currentBgColor === '#3d405b'">
+  
+  <!-- Balloon Stage -->
+  <div *ngIf="!showInterlude && !showCake && !showVideo" class="stage balloon-stage">
+    
+    <div class="header-msg glass-panel" *ngIf="balloonCount === 0">
+      <h1>Chhaya sent you a balloon</h1>
+      <p>Tap it to celebrate!</p>
+    </div>
+    
+    <div class="header-msg glass-panel mini" *ngIf="balloonCount > 0 && balloonCount < 30">
+      <p>Balloons popped: {{ balloonCount }}</p>
+    </div>
+
+    <!-- The Balloon(s) -->
+    <div class="balloon-cluster" [class.bundled]="balloonCount === 4">
+      <div class="balloon-wrapper" *ngFor="let b of balloonsToRender; let i = index" [style.transform]="getBalloonTransform(i)">
+        <div class="balloon-container" (click)="popBalloon()" *ngIf="!isBursting" [style.animationDelay]="(i * 0.2) + 's'">
+          <div class="balloon" [style.backgroundColor]="getBalloonColor(i)">
+            <div class="balloon-highlight"></div>
+          </div>
+          <div class="balloon-knot" [style.borderBottomColor]="getBalloonColor(i)"></div>
+          <div class="balloon-string"></div>
+        </div>
+        
+        <!-- Burst Animation -->
+        <div class="burst-container" *ngIf="isBursting">
+          <div class="particle p1" [style.backgroundColor]="getBalloonColor(i)"></div>
+          <div class="particle p2" [style.backgroundColor]="getBalloonColor(i)"></div>
+          <div class="particle p3" [style.backgroundColor]="getBalloonColor(i)"></div>
+          <div class="particle p4" [style.backgroundColor]="getBalloonColor(i)"></div>
+          <div class="particle p5" [style.backgroundColor]="getBalloonColor(i)"></div>
+          <div class="particle p6" [style.backgroundColor]="getBalloonColor(i)"></div>
+          <div class="particle p7" [style.backgroundColor]="getBalloonColor(i)"></div>
+          <div class="particle p8" [style.backgroundColor]="getBalloonColor(i)"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="instructions" *ngIf="balloonCount > 0">
+      <small>Keep popping...</small>
+    </div>
+
+  </div>
+
+  <!-- Interlude Stage -->
+  <div *ngIf="showInterlude" class="stage interlude-stage" (click)="nextAfterInterlude()">
+    <div class="glass-panel interlude-card" [class.special-effect]="currentPhotoIndex % 5 === 0">
+      <div class="photo-placeholder">
+        <!-- Application logic automatically looks for photo-X.[png|jpg|jpeg|jfif|webp|gif] -->
+        <img *ngIf="currentPhotoUrl" [src]="currentPhotoUrl" alt="Memory {{currentPhotoIndex}}" (error)="onPhotoError($event)" class="memory-photo" />
+        
+        <div class="audio-icon" *ngIf="hasAudio" (click)="toggleAudio($event)" [attr.title]="isAudioPlaying ? 'Pause Audio' : 'Play Audio'">
+          <span *ngIf="isAudioPlaying">🔊</span>
+          <span *ngIf="!isAudioPlaying">🔇</span>
+        </div>
+      </div>
+      <h2 class="interlude-msg">"{{ interludeMessages[currentPhotoIndex - 1] }}"</h2>
+      <button class="continue-btn">Continue</button>
+    </div>
+  </div>
+
+  <!-- Cake Stage -->
+  <div *ngIf="showCake" class="stage cake-stage">
+    <div class="glass-panel cake-card">
+      <h2>{{ cakeMessage }}</h2>
+      
+      <div class="cake-container">
+        <!-- Candles -->
+        <div class="candles">
+          <div class="candle-wrapper" *ngFor="let lit of candlesLit; let i = index" (click)="blowCandle(i)">
+            <div class="candle">
+              <div class="stripe"></div>
+              <div class="stripe"></div>
+              <div class="stripe"></div>
+              <div class="wick"></div>
+              <div class="flame" *ngIf="lit" [class.swaying]="candlesSwaying"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Cake Body -->
+        <div class="cake-top"></div>
+        <div class="cake-middle"></div>
+        <div class="cake-bottom"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Stage -->
+  <div *ngIf="showVideo" class="stage video-stage">
+    <div class="glass-panel video-card">
+      <h1>Thank you for being born!</h1>
+      <p>Hope this year goes happy for you.</p>
+      
+      <div class="video-container">
+        <video controls autoplay loop class="birthday-video">
+          <!-- User will place actual video here -->
+          <source src="assets/birthday-video.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <div class="video-placeholder-text">
+          <small>(Add 'birthday-video.mp4' to assets folder)</small>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+</div>
