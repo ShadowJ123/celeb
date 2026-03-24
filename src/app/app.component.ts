@@ -61,7 +61,7 @@ export class AppComponent implements OnInit {
   isAudioPlaying = false;
 
   get hasAudio() {
-    return this.currentPhotoIndex === 17;
+    return this.currentPhotoIndex === 17 || this.currentPhotoIndex === 1;
   }
 
   updatePhotoUrl() {
