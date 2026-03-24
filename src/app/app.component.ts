@@ -12,7 +12,12 @@ export class AppComponent implements OnInit {
   interludeSubIndex = 0; // 0 or 1
   showCake = false;
   showVideo = false;
+  showFinalBalloons = false;
   isBursting = false;
+  isFinalBursting = false;
+
+  finalBalloonsArray = Array.from({length: 31}, (_, i) => i);
+  finalBalloonColors: string[] = [];
 
   currentBgColor = 'var(--bg-white)';
   currentBalloonColor = 'var(--color-sky-blue)';
@@ -23,31 +28,60 @@ export class AppComponent implements OnInit {
   cakeMessage = 'Make a wish!';
 
   interludeMessages: string[] = [
-    "Year: [1995]  Status: Born  Evidence: Missing",
-    // "First photo I saw of you!",
-    "This was your diet at that age, right?",
-    // "Second time we met!",
-    "I found your toys",
-    "Somewhere far away, I was born",
-    // "Third time you met me… plot twist: we got married 😌",
-    "Finally recovered your footage 😌.Probably made you too cute.",
-    "You became brother for the second time!",
-    "Found your first writing book!, were you this late to writing?",
-    "And third!...",
-    "You probably got books to read!",
-    "Lovely post cards sent to your parents!",
-    "What felt like most difficult language to learn, you mastered it!",
-    "You got a favourite hobby!",
-    "And another one!",
-    "Got one of this?",
-    "You probably won a trophy or two by now!",
-    "Learning the basics",
-    "Did you do this then?",
+    "Year: [1995]  Status: Born  Evidence: Missing",//1
+    "This was your diet at that age, right?",//2
+    "I found your toys",//3
+    "Somewhere far away, I was born",//4
+    "Finally recovered your footage 😌.Probably made you too cute.",//5
+    "I admit, you were cuter than i imagined!",//6
+    "Found your first writing book!",//7
+    "all your siblings are born by now!...",//8
+    "So young… and already giving speeches.",//9
+    "Lovely post cards sent to your parents!",//10
+    "What felt like most difficult language to learn, you mastered it!",//11
+    "You got a favourite hobby!",//12
+    "And another one!",//13
+    "Got one of this?",//14
+    "You probably won a trophy or two by now!",//15
+    "Learning the basics",//16
+    "Did you do this then?",//17
+    "Found friendships that will last a lifetime.",//18
+    "Let's appreciate this style!",//19
+    "When you all decided to try something different 😄",//20
+    "Practically winnning the drama!",//21
+    "Getting your first jobs together!",//22
+    "Figuring things out in the city of dreams.",//23
+    "From here… Startup Grosta started taking shape.",//24
+    "And then… life turned upside down. #Covid",//25
+    "Staying focused",//26
+    "Making it happen.",//27
+    "Looking for me?",//28
+    "Sealed with a ring.",//29
+    "Where everything finally fell into place.",//30
+    "A dreamy escape in Andaman",//31
+    "By now, both sisters were married.",//32
+    "Celebrating two birthdays a year!",//33
+    "Becoming Mumbaikar",
+    "",
     ...Array.from({ length: 54 }, (_, i) => `Message for photo ${i + 7}`)
   ];
 
   get currentPhotoIndex(): number {
     return this.interludeIndex;
+  }
+
+  getStartPhotoIndexForBalloon(b: number): number {
+    if (b <= 27) return b;
+    if (b === 28) return 28;
+    if (b === 29) return 31;
+    return 33;
+  }
+
+  getTargetPhotoIndexForBalloon(b: number): number {
+    if (b <= 27) return b;
+    if (b === 28) return 30;
+    if (b === 29) return 32;
+    return 34;
   }
 
   currentPhotoUrl = '';
@@ -147,7 +181,7 @@ export class AppComponent implements OnInit {
       this.isBursting = false;
       this.balloonCount++;
 
-      this.interludeIndex = this.balloonCount;
+      this.interludeIndex = this.getStartPhotoIndexForBalloon(this.balloonCount);
       this.interludeSubIndex = 0;
       this.currentExtensionIndex = 0;
       this.updatePhotoUrl();
@@ -155,14 +189,91 @@ export class AppComponent implements OnInit {
     }, 400); // 400ms burst animation
   }
 
-  nextAfterInterlude() {
-    this.showInterlude = false;
+  get canGoBack() {
+    return this.balloonCount > 0 || this.showVideo || this.showCake || this.showInterlude || this.showFinalBalloons;
+  }
 
-    if (this.balloonCount >= 30) {
+  goBack() {
+    if (this.showVideo) {
+      this.showVideo = false;
+      this.candlesLit = [true, true, true, true];
+      this.candlesSwaying = false;
+      this.cakeMessage = 'Make a wish!';
       this.startCakeStage();
-    } else {
-      this.updateColors();
+    } else if (this.showCake) {
+      this.showCake = false;
+      this.generateFinalBalloonColors();
+      this.showFinalBalloons = true;
+    } else if (this.showFinalBalloons) {
+      this.showFinalBalloons = false;
+      if (this.balloonCount > 0) {
+        this.showInterlude = true;
+        this.interludeIndex = this.getTargetPhotoIndexForBalloon(this.balloonCount);
+        this.updatePhotoUrl();
+      }
+    } else if (this.showInterlude) {
+      if (this.interludeIndex > this.getStartPhotoIndexForBalloon(this.balloonCount)) {
+        this.interludeIndex--;
+        this.updatePhotoUrl();
+      } else {
+        this.showInterlude = false;
+        // Decrease balloon count so the balloon is "un-popped"
+        this.balloonCount--;
+        this.updateColors();
+      }
+    } else if (this.balloonCount > 0) {
+      this.showInterlude = true;
+      this.interludeIndex = this.getTargetPhotoIndexForBalloon(this.balloonCount);
+      this.updatePhotoUrl();
     }
+  }
+
+  goToLastPage() {
+    this.showInterlude = false;
+    this.showCake = false;
+    this.showVideo = true;
+  }
+
+  nextAfterInterlude() {
+    if (this.interludeIndex < this.getTargetPhotoIndexForBalloon(this.balloonCount)) {
+      this.interludeIndex++;
+      this.updatePhotoUrl();
+    } else {
+      this.showInterlude = false;
+
+      if (this.balloonCount >= 30) {
+        this.generateFinalBalloonColors();
+        this.showFinalBalloons = true;
+      } else {
+        this.updateColors();
+      }
+    }
+  }
+
+  generateFinalBalloonColors() {
+    this.finalBalloonColors = this.finalBalloonsArray.map(() => 
+      this.randomColors[Math.floor(Math.random() * this.randomColors.length)]
+    );
+  }
+
+  getFinalBalloonColor(i: number) {
+    return this.finalBalloonColors[i];
+  }
+
+  popFinalBalloons() {
+    if (this.isFinalBursting) return;
+    this.isFinalBursting = true;
+    
+    // Play sound a couple of times for a grand effect
+    this.playPopSound();
+    setTimeout(() => this.playPopSound(), 100);
+    setTimeout(() => this.playPopSound(), 200);
+
+    setTimeout(() => {
+      this.showFinalBalloons = false;
+      this.isFinalBursting = false;
+      this.startCakeStage();
+    }, 600);
   }
 
   get balloonsToRender() {

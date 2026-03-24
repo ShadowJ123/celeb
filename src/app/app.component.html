@@ -1,7 +1,12 @@
 <div class="app-container" [style.backgroundColor]="currentBgColor" [class.dark-mode]="currentBgColor === 'var(--bg-black)' || currentBgColor === '#3d405b'">
   
+  <div class="top-nav">
+    <button class="nav-btn" (click)="goBack()" *ngIf="canGoBack">← Back</button>
+    <button class="nav-btn" (click)="goToLastPage()" *ngIf="!showVideo">Go to Last Page →</button>
+  </div>
+
   <!-- Balloon Stage -->
-  <div *ngIf="!showInterlude && !showCake && !showVideo" class="stage balloon-stage">
+  <div *ngIf="!showInterlude && !showCake && !showVideo && !showFinalBalloons" class="stage balloon-stage">
     
     <div class="header-msg glass-panel" *ngIf="balloonCount === 0">
       <h1>Chhaya sent you a balloon</h1>
@@ -43,6 +48,38 @@
 
   </div>
 
+  <!-- Final 31 Balloons Stage -->
+  <div *ngIf="showFinalBalloons" class="stage final-balloons-stage">
+    <div class="header-msg glass-panel mini">
+      <h1>31 Years, 31 Balloons!</h1>
+      <p>Tap anywhere to pop them all!</p>
+    </div>
+    
+    <div class="final-balloon-grid" (click)="popFinalBalloons()">
+      <div class="balloon-wrapper" *ngFor="let b of finalBalloonsArray; let i = index">
+        <div class="balloon-container" *ngIf="!isFinalBursting" [style.animationDelay]="(i * 0.1) + 's'">
+          <div class="balloon" [style.backgroundColor]="getFinalBalloonColor(i)">
+            <div class="balloon-highlight"></div>
+          </div>
+          <div class="balloon-knot" [style.borderBottomColor]="getFinalBalloonColor(i)"></div>
+          <div class="balloon-string"></div>
+        </div>
+        
+        <!-- Burst Animation -->
+        <div class="burst-container" *ngIf="isFinalBursting">
+          <div class="particle p1" [style.backgroundColor]="getFinalBalloonColor(i)"></div>
+          <div class="particle p2" [style.backgroundColor]="getFinalBalloonColor(i)"></div>
+          <div class="particle p3" [style.backgroundColor]="getFinalBalloonColor(i)"></div>
+          <div class="particle p4" [style.backgroundColor]="getFinalBalloonColor(i)"></div>
+          <div class="particle p5" [style.backgroundColor]="getFinalBalloonColor(i)"></div>
+          <div class="particle p6" [style.backgroundColor]="getFinalBalloonColor(i)"></div>
+          <div class="particle p7" [style.backgroundColor]="getFinalBalloonColor(i)"></div>
+          <div class="particle p8" [style.backgroundColor]="getFinalBalloonColor(i)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Interlude Stage -->
   <div *ngIf="showInterlude" class="stage interlude-stage" (click)="nextAfterInterlude()">
     <div class="glass-panel interlude-card" [class.special-effect]="currentPhotoIndex % 5 === 0">
@@ -80,9 +117,7 @@
         </div>
         
         <!-- Cake Body -->
-        <div class="cake-top"></div>
-        <div class="cake-middle"></div>
-        <div class="cake-bottom"></div>
+        <img src="assets/my-cake.png" alt="Cake" class="custom-cake-img" />
       </div>
     </div>
   </div>
