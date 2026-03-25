@@ -82,8 +82,10 @@
 
   <!-- Interlude Stage -->
   <div *ngIf="showInterlude" class="stage interlude-stage" (click)="nextAfterInterlude()">
-    <div class="glass-panel interlude-card" [class.special-effect]="[6, 10, 16, 23].includes(currentPhotoIndex)">
-      <div class="photo-placeholder">
+    <div class="glass-panel interlude-card" 
+         [class.special-effect]="[6, 10, 16, 23, 27].includes(currentPhotoIndex)"
+         [class.post-24-card]="currentPhotoIndex === 24">
+      <div class="photo-placeholder" *ngIf="currentPhotoIndex !== 24">
         <!-- Application logic automatically looks for photo-X.[png|jpg|jpeg|jfif|webp|gif] -->
         <img *ngIf="currentPhotoUrl" [src]="currentPhotoUrl" alt="Memory {{currentPhotoIndex}}" (error)="onPhotoError($event)" class="memory-photo" />
         
@@ -92,7 +94,13 @@
           <span *ngIf="!isAudioPlaying">🔇</span>
         </div>
       </div>
-      <h2 class="interlude-msg">"{{ interludeMessages[currentPhotoIndex - 1] }}"</h2>
+      <!-- Specific View for Post 24 -->
+      <div class="post-24-content" *ngIf="currentPhotoIndex === 24">
+        <h2 class="post-24-msg">"{{ interludeMessages[currentPhotoIndex - 1] }}"</h2>
+      </div>
+
+      <!-- Standard View for other posts -->
+      <h2 class="interlude-msg" *ngIf="currentPhotoIndex !== 24">"{{ interludeMessages[currentPhotoIndex - 1] }}"</h2>
       <button class="continue-btn">Continue</button>
     </div>
   </div>

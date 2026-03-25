@@ -288,6 +288,43 @@
   color: inherit;
 }
 
+/* Post 24 Special Styling */
+.post-24-card {
+  width: 600px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.post-24-content {
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.post-24-msg {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 2.5rem;
+  font-weight: 400;
+  line-height: 1.4;
+  font-style: italic;
+  color: #fff;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  margin: 0;
+  animation: textFloat 3s ease-in-out infinite;
+}
+
+@keyframes textFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@media (max-width: 768px) {
+  .post-24-msg {
+    font-size: 1.8rem;
+  }
+}
+
 .continue-btn {
   background: rgba(255, 255, 255, 0.3);
   padding: 12px 24px;

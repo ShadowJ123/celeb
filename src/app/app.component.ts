@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
   showFinalBalloons = false;
   isBursting = false;
   isFinalBursting = false;
+  isTransitioning = false;
 
   finalBalloonsArray = Array.from({ length: 31 }, (_, i) => i);
   finalBalloonColors: string[] = [];
@@ -38,7 +39,7 @@ export class AppComponent implements OnInit {
     "Suddenly full house with all siblings.",//4 //8
     "Be honest... did this start early too? 😄",
     "Writing back home... one postcard at a time.",//10
-    "Figuring things out... one step at a time.",//11
+    "No guarantees. Just effort.",//11
     "So young… already owning the room.",//5 //9
     "This wasn't just a hobby... it stuck.",//13
     // "Got one of this?",//14
@@ -50,16 +51,16 @@ export class AppComponent implements OnInit {
     "Confidence > fashion sense.",//19
     // "When you all decided to try something different 😄",//20
     "First real steps into IT world!",//22
-    "New city. New pressure. Same you.",//23
+    "New city. Same drive.",//23
     "From here… Startup Grosta wasn't just a plan.",//24
     "And then… everything flipped. #Covid",//25
     "No noise. No excuses. Just you.. figuring it out",//26
-    "And then.. it paid off.",//27
+    "Every late night led here.",//27
     "Looking for me?",//28
     "Somewhere here... you chose me.",//29
     "This is where we stopped being two stories.",//30
     // "A little pause... before everything else began.",//31
-    "And just like that...everyone found their person.",//32
+    "We didnt begin with everything... but we built it.",//32
     "Now we celebrate everything twice.",//33
     "From dreams... to an address.",
     //2 3 5 7 12 14
@@ -230,22 +231,46 @@ export class AppComponent implements OnInit {
   }
 
   nextAfterInterlude() {
+    if (this.isTransitioning) return;
+
     if (this.interludeIndex < this.getTargetPhotoIndexForBalloon(this.balloonCount)) {
       this.interludeIndex++;
       this.updatePhotoUrl();
     } else {
-      this.showInterlude = false;
+      const slowDownPosts = [22, 23, 24, 27];
+      if (slowDownPosts.includes(this.balloonCount)) {
+        this.isTransitioning = true;
+        
+        // Define delays for specific posts
+        let delay = 1000; // default for 22
+        if (this.balloonCount === 23 || this.balloonCount === 24) {
+          delay = 2000;
+        } else if (this.balloonCount === 27) {
+          delay = 3000;
+        }
 
-      if (this.interludeIndex === 27) {
-        this.photoAudio.src = 'assets/audio-27.m4a';
-        this.photoAudio.play().catch(e => console.warn('Audio-27 play failed', e));
-      }
-      if (this.balloonCount >= 27) {
-        this.generateFinalBalloonColors();
-        this.showFinalBalloons = true;
+        setTimeout(() => {
+          this.completeNextAfterInterlude();
+          this.isTransitioning = false;
+        }, delay);
       } else {
-        this.updateColors();
+        this.completeNextAfterInterlude();
       }
+    }
+  }
+
+  completeNextAfterInterlude() {
+    this.showInterlude = false;
+
+    if (this.interludeIndex === 27) {
+      this.photoAudio.src = 'assets/audio-27.m4a';
+      this.photoAudio.play().catch(e => console.warn('Audio-27 play failed', e));
+    }
+    if (this.balloonCount >= 27) {
+      this.generateFinalBalloonColors();
+      this.showFinalBalloons = true;
+    } else {
+      this.updateColors();
     }
   }
 
