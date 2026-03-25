@@ -6,9 +6,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  balloonCount = 0; // 0 to 29 indicates balloons 1 to 30
+  balloonCount = 0; // 0 to 27 indicates balloons 1 to 28
   showInterlude = false;
-  interludeIndex = 0; // 1 to 30
+  interludeIndex = 0; // 1 to 28
   interludeSubIndex = 0; // 0 or 1
   showCake = false;
   showVideo = false;
@@ -16,7 +16,7 @@ export class AppComponent implements OnInit {
   isBursting = false;
   isFinalBursting = false;
 
-  finalBalloonsArray = Array.from({length: 31}, (_, i) => i);
+  finalBalloonsArray = Array.from({ length: 31 }, (_, i) => i);
   finalBalloonColors: string[] = [];
 
   currentBgColor = 'var(--bg-white)';
@@ -28,41 +28,42 @@ export class AppComponent implements OnInit {
   cakeMessage = 'Make a wish!';
 
   interludeMessages: string[] = [
-    "Year: [1995]  Status: Born  Evidence: Missing",//1
-    "This was your diet at that age, right?",//2
-    "I found your toys",//3
-    "Somewhere far away, I was born",//4
-    "Finally recovered your footage 😌.Probably made you too cute.",//5
-    "I admit, you were cuter than i imagined!",//6
-    "Found your first writing book!",//7
-    "all your siblings are born by now!...",//8
-    "So young… and already giving speeches.",//9
-    "Lovely post cards sent to your parents!",//10
-    "What felt like most difficult language to learn, you mastered it!",//11
-    "You got a favourite hobby!",//12
-    "And another one!",//13
-    "Got one of this?",//14
-    "You probably won a trophy or two by now!",//15
-    "Learning the basics",//16
-    "Did you do this then?",//17
-    "Found friendships that will last a lifetime.",//18
-    "Let's appreciate this style!",//19
-    "When you all decided to try something different 😄",//20
-    "Practically winnning the drama!",//21
-    "Getting your first jobs together!",//22
-    "Figuring things out in the city of dreams.",//23
-    "From here… Startup Grosta started taking shape.",//24
-    "And then… life turned upside down. #Covid",//25
-    "Staying focused",//26
-    "Making it happen.",//27
+    "Year: [1995]  Status: Born,  Evidence: Still missing",//1
+    // "This was your diet at that age, right?",//2
+    // "I found your toys",//3
+    "Still not convinced this cute kid is you.",//2 //4
+    // "Finally recovered your footage 😌.Probably made you too cute.",//5
+    "Same time ...different states, I was here too.",//3 //6
+    // "Found your first writing book!",//7
+    "Suddenly full house with all siblings.",//4 //8
+    "Be honest... did this start early too? 😄",
+    "Writing back home... one postcard at a time.",//10
+    "Figuring things out... one step at a time.",//11
+    "So young… already owning the room.",//5 //9
+    "This wasn't just a hobby... it stuck.",//13
+    // "Got one of this?",//14
+    "Winning started feeling normal here.",//15
+    "Where discipline became routine.",//16
+    "You didnt just act... you stole the show.",//21
+    // "Did you do this then?",//17
+    "Some people... just stay.",//18
+    "Confidence > fashion sense.",//19
+    // "When you all decided to try something different 😄",//20
+    "First real steps into IT world!",//22
+    "New city. New pressure. Same you.",//23
+    "From here… Startup Grosta wasn't just a plan.",//24
+    "And then… everything flipped. #Covid",//25
+    "No noise. No excuses. Just you.. figuring it out",//26
+    "And then.. it paid off.",//27
     "Looking for me?",//28
-    "Sealed with a ring.",//29
-    "Where everything finally fell into place.",//30
-    "A dreamy escape in Andaman",//31
-    "By now, both sisters were married.",//32
-    "Celebrating two birthdays a year!",//33
-    "Becoming Mumbaikar",
-    "",
+    "Somewhere here... you chose me.",//29
+    "This is where we stopped being two stories.",//30
+    // "A little pause... before everything else began.",//31
+    "And just like that...everyone found their person.",//32
+    "Now we celebrate everything twice.",//33
+    "From dreams... to an address.",
+    //2 3 5 7 12 14
+    "You've done a lot in life...but my favourite part is where I got to be in it.",
     ...Array.from({ length: 54 }, (_, i) => `Message for photo ${i + 7}`)
   ];
 
@@ -71,17 +72,11 @@ export class AppComponent implements OnInit {
   }
 
   getStartPhotoIndexForBalloon(b: number): number {
-    if (b <= 27) return b;
-    if (b === 28) return 28;
-    if (b === 29) return 31;
-    return 33;
+    return b;
   }
 
   getTargetPhotoIndexForBalloon(b: number): number {
-    if (b <= 27) return b;
-    if (b === 28) return 30;
-    if (b === 29) return 32;
-    return 34;
+    return b;
   }
 
   currentPhotoUrl = '';
@@ -95,7 +90,7 @@ export class AppComponent implements OnInit {
   isAudioPlaying = false;
 
   get hasAudio() {
-    return this.currentPhotoIndex === 17 || this.currentPhotoIndex === 1;
+    return this.currentPhotoIndex === 5 || this.currentPhotoIndex === 1 || this.currentPhotoIndex === 21;
   }
 
   updatePhotoUrl() {
@@ -109,7 +104,7 @@ export class AppComponent implements OnInit {
 
   playPhotoAudio() {
     this.photoAudio.src = `assets/audio-${this.currentPhotoIndex}.${this.audioExtensions[this.currentAudioExtensionIndex]}`;
-    
+
     this.photoAudio.onerror = () => {
       if (this.currentAudioExtensionIndex < this.audioExtensions.length - 1) {
         this.currentAudioExtensionIndex++;
@@ -241,7 +236,11 @@ export class AppComponent implements OnInit {
     } else {
       this.showInterlude = false;
 
-      if (this.balloonCount >= 30) {
+      if (this.interludeIndex === 27) {
+        this.photoAudio.src = 'assets/audio-27.m4a';
+        this.photoAudio.play().catch(e => console.warn('Audio-27 play failed', e));
+      }
+      if (this.balloonCount >= 27) {
         this.generateFinalBalloonColors();
         this.showFinalBalloons = true;
       } else {
@@ -251,7 +250,7 @@ export class AppComponent implements OnInit {
   }
 
   generateFinalBalloonColors() {
-    this.finalBalloonColors = this.finalBalloonsArray.map(() => 
+    this.finalBalloonColors = this.finalBalloonsArray.map(() =>
       this.randomColors[Math.floor(Math.random() * this.randomColors.length)]
     );
   }
@@ -263,7 +262,7 @@ export class AppComponent implements OnInit {
   popFinalBalloons() {
     if (this.isFinalBursting) return;
     this.isFinalBursting = true;
-    
+
     // Play sound a couple of times for a grand effect
     this.playPopSound();
     setTimeout(() => this.playPopSound(), 100);
@@ -277,11 +276,11 @@ export class AppComponent implements OnInit {
   }
 
   get balloonsToRender() {
-    return this.balloonCount === 4 ? [0, 1, 2, 3, 4] : [0];
+    return this.balloonCount === 5 ? [0, 1, 2, 3, 4] : [0];
   }
 
   getBalloonTransform(index: number) {
-    if (this.balloonCount === 4) {
+    if (this.balloonCount === 5) {
       const rotations = [-25, -12, 0, 12, 25];
       return `rotate(${rotations[index]}deg)`;
     }
@@ -289,7 +288,7 @@ export class AppComponent implements OnInit {
   }
 
   getBalloonColor(index: number) {
-    if (this.balloonCount === 4 && this.clusterColors.length > index) {
+    if (this.balloonCount === 5 && this.clusterColors.length > index) {
       return this.clusterColors[index];
     }
     return this.currentBalloonColor;
@@ -316,8 +315,8 @@ export class AppComponent implements OnInit {
       this.currentBalloonColor = this.randomColors[randColIdx];
     }
 
-    if (this.balloonCount === 4) {
-      this.clusterColors = Array.from({ length: 5 }, () => 
+    if (this.balloonCount === 5) {
+      this.clusterColors = Array.from({ length: 5 }, () =>
         this.randomColors[Math.floor(Math.random() * this.randomColors.length)]
       );
     }
