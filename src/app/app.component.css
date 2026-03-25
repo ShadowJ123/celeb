@@ -448,6 +448,10 @@
     font-size: 2rem;
   }
   
+  .header-msg.mini {
+    top: 10%;
+  }
+  
   .balloon {
     width: 100px;
     height: 125px;
